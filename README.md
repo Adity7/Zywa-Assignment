@@ -48,5 +48,10 @@ Now enter either your Card Number or your Mobile number to get the Status of you
   
 ![Result Page ](https://github.com/Adity7/Zywa-Assignment/assets/58148990/1637dde8-ebad-46b0-874c-2ec588448d28)
 
+## For Docker File:
+- docker build -t zywa
+- docker run -p 6001:5000 zywa
+- It till listen at port 6001
+
 
 
