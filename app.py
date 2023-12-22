@@ -1,7 +1,7 @@
 import os
 import pandas as pd
-from sqlalchemy import create_engine, types,text
-from datetime import datetime
+from sqlalchemy import create_engine, types
+
 
 # Replace 'your_username', 'your_password', 'your_host', and 'your_port' with your actual database credentials
 db_credentials = {
@@ -24,23 +24,22 @@ engine = create_engine(
 
 # Define the mapping dictionary for the "Pickup.csv" file
 common_mapping = {
-    'Card ID': 'Card Id',
-    'User contact': 'Contact Number',
-    'Timestamp': 'Last Update'
+    'Card ID': 'Card_Id',
+    'User contact': 'Contact_Number',
+    'Timestamp': 'Last_Update'
 }
 # Define the mapping dictionary for the "Returned.csv" file
 delivery_exception_mapping = {
-    'Card ID': 'Card Id',
-    'User contact': 'Contact Number',
-    'Timestamp': 'Last Update',
+    'Card ID': 'Card_Id',
+    'User contact': 'Contact_Number',
+    'Timestamp': 'Last_Update',
     'Comment': 'Comment'
 }
 
 Pickup_mapping = {
-    'Card ID': 'Card Id',
-    'User Mobile': 'Contact Number',
-    'Timestamp': 'Last Update',
-    'Comment': 'Comment'
+    'Card ID': 'Card_Id',
+    'User Mobile': 'Contact_Number',
+    'Timestamp': 'Last_Update',
 }
 
 # Iterate through CSV files in the specified folder and update the database
@@ -70,33 +69,20 @@ for filename in file_order:
         df['Comment'] = 'None'
     # Define the data types and lengths for the database table columns
     table_dtypes = {
-            'Card Id': types.VARCHAR(length=255),
-            'Contact Number': types.VARCHAR(length=255),
-            'Last Update': types.DATETIME(),
+            'Card_Id': types.VARCHAR(length=255),
+            'Contact_Number': types.VARCHAR(length=255),
+            'Last_Update': types.DATETIME(),
             'Status': types.VARCHAR(length=255),
             'Comment': types.VARCHAR(length=255)
         }
     # Set the 'Status' and 'Comment' values for the current CSV file
     df['Status'] = status_value
-    print(df)
-    print('\n')
-    for index, row in df.iterrows():
-        card_id = row['Card Id']
+    df['Contact_Number'] = df['Contact_Number'].astype(str)
+    # Remove non-numeric characters from the "Contact Number" column
+    df['Contact_Number'] = df['Contact_Number'].str.replace(r'\D', '', regex=True)
+    df['Last_Update'] = pd.to_datetime(df['Last_Update'], format='%d-%m-%Y %H:%M', errors='coerce')
+    # print(df)
+    # print('\n')
+    df.to_sql(table_name, engine, index=False, if_exists='append', chunksize=1000)
 
-        # Check if a row with the same 'Card Id' already exists in the database
-        existing_entry = pd.read_sql_query(
-            f"SELECT * FROM {table_name} WHERE `Card Id` = '{card_id}'", engine)
-
-        if existing_entry.empty:
-            # If no existing entry, append the row to the database
-            pd.DataFrame([row]).to_sql(
-                name=table_name, con=engine, if_exists='append', index=False, dtype=table_dtypes)
-        else:
-            # If an existing entry is found, update the values
-            existing_entry_index = existing_entry.index[0]
-            existing_entry['Last Update'] = row['Last Update']
-            existing_entry['Status'] = status_value
-            existing_entry['Comment'] = row['Comment']
-            existing_entry.to_sql(
-                name=table_name, con=engine, if_exists='replace', index=False, dtype=table_dtypes)
 engine.dispose()

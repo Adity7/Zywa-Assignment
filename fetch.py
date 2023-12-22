@@ -26,14 +26,20 @@ def index():
         contact_number = request.form['contact_number']
 
         try:
-            # Example query based on Card Number and Contact Number
-            query = f"SELECT * FROM {table_name} WHERE `Card Id` = %s OR `Contact Number` = %s"
+            # Example query based on Card Number and Contact Number, sorted by Last_Update in decreasing order
+            query = f"SELECT * FROM {table_name} WHERE `Card_Id` = %s OR `Contact_Number` = %s ORDER BY `Last_Update` DESC"
 
             # Execute the query with parameters and fetch the results into a DataFrame
             result_df = pd.read_sql_query(query, engine, params=(card_number, contact_number))
 
-            # Pass the results to the HTML template
-            return render_template('search.html', result_df=result_df)
+            # Check if any results are found
+            if not result_df.empty:
+                # Pass the results to the HTML template
+                return render_template('search.html', result_df=result_df)
+            else:
+                # Provide a message if no results are found
+                no_results_message = "No results found for the provided Card Number or Contact Number."
+                return render_template('search.html', result_df=None, no_results_message=no_results_message)
 
         except Exception as e:
             # Handle the exception, either redirect to an error page or display a message
@@ -41,6 +47,9 @@ def index():
             return render_template('error.html', error_message=error_message)
 
     return render_template('search.html', result_df=None)
+
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)
