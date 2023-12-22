@@ -53,5 +53,12 @@ Now enter either your Card Number or your Mobile number to get the Status of you
 - docker run -p 6001:5000 zywa
 - It till listen at port 6001
 
+## Our Database is hosted on aws server
+- It's Schema look like this
+- ![Database](https://github.com/Adity7/Zywa-Assignment/assets/58148990/920f38af-bae0-43c5-ab5b-b7cfc9ba096a)
+
+  
+
+
 
 
