@@ -35,3 +35,18 @@ Create backend that returns status of card
 - Mysql
 
 
+## How to Run
+- Store the data files (csv) in the data folder
+- Run the app.py file to upload your data to Database
+- Run the fetch.py file to render the website where Search can be done by the User
+- It will look like this
+  
+![Home Page](https://github.com/Adity7/Zywa-Assignment/assets/58148990/e206b1ed-df2e-4e8f-a5cf-1a1e20aa64f2)
+
+Now enter either your Card Number or your Mobile number to get the Status of your card 
+- The Result will look like this
+  
+![Result Page ](https://github.com/Adity7/Zywa-Assignment/assets/58148990/1637dde8-ebad-46b0-874c-2ec588448d28)
+
+
+
